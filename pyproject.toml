@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noteweave-bfts"
+version = "0.1.0"
+description = "NoteWeave BFTS — Best-First Tree Search for automated ML experiments"
+requires-python = ">=3.10"
+dependencies = [
+    # Core
+    "pydantic>=2.0",
+    "rich",
+    "PyYAML",
+    "numpy",
+    "Pillow",
+    # LLM backends (OpenAI-compat client)
+    "openai>=1.0",
+    "backoff",
+    # BFTS tree search
+    "omegaconf",
+    "coolname",
+    "jsonschema",
+    "genson",
+    "python-igraph",
+    "shutup",
+    "black",
+    "humanize",
+    "dataclasses-json",
+    "funcy",
+    # HTTP client for noteweave backend proxy
+    "httpx",
+    # Plotting
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+torch = ["torch", "torchvision"]
+
+[project.scripts]
+noteweave-bfts = "noteweave_bfts.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["noteweave_bfts*"]
+
+[tool.setuptools.package-data]
+noteweave_bfts = ["utils/viz_templates/*"]
