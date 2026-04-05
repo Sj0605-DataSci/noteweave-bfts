@@ -14,8 +14,7 @@ dependencies = [
     "PyYAML",
     "numpy",
     "Pillow",
-    # LLM backends (OpenAI-compat client)
-    "openai>=1.0",
+    # LLM backends (only needed in standalone mode, but kept as deps for now)
     "backoff",
     # BFTS tree search
     "omegaconf",
@@ -30,12 +29,15 @@ dependencies = [
     "funcy",
     # HTTP client for noteweave backend proxy
     "httpx",
+    # Data handling
+    "pandas",
     # Plotting
     "matplotlib",
 ]
 
 [project.optional-dependencies]
 torch = ["torch", "torchvision"]
+standalone = ["openai>=1.0", "anthropic"]
 
 [project.scripts]
 noteweave-bfts = "noteweave_bfts.__main__:main"
