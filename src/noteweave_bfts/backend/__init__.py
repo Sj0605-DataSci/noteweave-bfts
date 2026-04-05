@@ -8,18 +8,31 @@ Otherwise falls back to direct OpenAI/Anthropic/Ollama calls.
 
 import os
 
-from . import backend_anthropic, backend_ollama, backend_openai, backend_noteweave
+from . import backend_noteweave
 from .utils import FunctionSpec, OutputType, PromptType, compile_prompt_to_md
 
 # When launched by the NoteWeave runner, this env var is set
 _USE_NOTEWEAVE = os.environ.get("NOTEWEAVE_BFTS_BACKEND", "").lower() == "noteweave"
 
 
+def _lazy_anthropic():
+    from . import backend_anthropic
+    return backend_anthropic
+
+def _lazy_openai():
+    from . import backend_openai
+    return backend_openai
+
+def _lazy_ollama():
+    from . import backend_ollama
+    return backend_ollama
+
+
 def get_ai_client(model: str, **model_kwargs):
     if _USE_NOTEWEAVE:
         return None
     if "claude-" in model:
-        return backend_anthropic.get_ai_client(model=model, **model_kwargs)
+        return _lazy_anthropic().get_ai_client(model=model, **model_kwargs)
     elif model.startswith("ollama/"):
         return None
     else:
@@ -73,11 +86,11 @@ def query(
         model_kwargs["max_tokens"] = max_tokens
 
     if "claude-" in model:
-        query_func = backend_anthropic.query
+        query_func = _lazy_anthropic().query
     elif model.startswith("ollama/"):
-        query_func = backend_ollama.query
+        query_func = _lazy_ollama().query
     else:
-        query_func = backend_openai.query
+        query_func = _lazy_openai().query
 
     output, req_time, in_tok_count, out_tok_count, info = query_func(
         system_message=compile_prompt_to_md(system_message) if system_message else None,
